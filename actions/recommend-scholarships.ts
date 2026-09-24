@@ -251,6 +251,9 @@ export default defineAction({
     "Estimate scholarship fit, likely funding, strengths, gaps, and the ten best current catalog opportunities for a detailed candidate profile.",
   schema,
   http: { method: "POST" },
+  // This is the single public action used by the account-free assessment.
+  // It is read-only and accepts only the validated scholarship profile schema.
+  requiresAuth: false,
   readOnly: true,
   run: async (profile) => {
     const normalizedGpa = (profile.gpa / Number(profile.gpaScale)) * 10;

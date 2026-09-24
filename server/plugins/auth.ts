@@ -3,8 +3,15 @@ import { createAuthPlugin } from "@agent-native/core/server";
 const appTitle = "Scholarship Compass";
 
 export default createAuthPlugin({
+  // Keep account-backed framework routes protected, but never replace the
+  // product landing page with Agent Native's sign-in document.
+  rootAuth: false,
   workspaceAppPublicPaths: ["/", "/discover"],
-  publicPaths: ["/discover", "/_agent-native/actions/recommend-scholarships"],
+  publicPaths: [
+    "/",
+    "/discover",
+    "/_agent-native/actions/recommend-scholarships",
+  ],
   marketing: {
     appName: appTitle,
     screenshotPath: "/auth-marketing/chat.webp",
