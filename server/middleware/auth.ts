@@ -8,8 +8,23 @@ import { runAuthGuard } from "@agent-native/core/server";
  * framework handler's middleware registry is scoped to that catch-all.
  * Page routes (/, /settings) and API routes (/api/*) would bypass auth.
  */
-import { defineEventHandler } from "h3";
+import { defineEventHandler, getHeader, getRequestURL, sendRedirect } from "h3";
 
 export default defineEventHandler(async (event) => {
+  const path = getRequestURL(event).pathname;
+  const acceptsHtml = getHeader(event, "accept")?.includes("text/html");
+
+  // The public product has only two screens. Legacy template pages are not
+  // exposed as login destinations; direct visits return to the landing page.
+  if (
+    event.method === "GET" &&
+    acceptsHtml &&
+    path !== "/" &&
+    path !== "/discover" &&
+    !path.startsWith("/_agent-native/")
+  ) {
+    return sendRedirect(event, "/", 302);
+  }
+
   return runAuthGuard(event);
 });

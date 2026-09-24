@@ -4,6 +4,8 @@ Website tư vấn học bổng có Agent chạy phía sau để chuẩn hóa ngu
 sơ và xếp hạng Top 10 cơ hội. Trang chủ giới thiệu học bổng nổi bật; khảo sát
 chuyên sâu bao gồm học thuật, ngoại ngữ, công việc, nghiên cứu, công bố, giải
 thưởng, ngoại khóa, lãnh đạo và tài chính. Ngành học là trường nhập tự do.
+Trải nghiệm public không yêu cầu đăng ký hoặc đăng nhập: người dùng duyệt landing
+page trước và chỉ vào khảo sát khi chủ động chọn một nút kêu gọi hành động.
 
 ## Chạy dự án
 
@@ -16,7 +18,7 @@ Copy-Item .env.example .env
 pnpm dev
 ```
 
-Mở `/discover` để dùng khảo sát và `/home` để trao đổi trong giao diện cố vấn.
+Mở `/` để xem landing page và `/discover` để thực hiện khảo sát.
 
 ## Kiểm tra chất lượng
 
@@ -29,11 +31,12 @@ pnpm agent-native:doctor
 
 ## Kiến trúc chính
 
-- `app/routes/discover.tsx`: khảo sát bốn bước và màn hình Top 10.
+- `app/routes/_index.tsx`: landing page có tìm kiếm và lọc học bổng nổi bật.
+- `app/routes/discover.tsx`: khảo sát bảy bước và màn hình Top 10.
 - `actions/recommend-scholarships.ts`: action xếp hạng dùng chung cho UI và agent.
 - `server/data/scholarships.ts`: dữ liệu mẫu có đường dẫn nguồn chính thức.
 - `supabase/migrations/`: schema Supabase cho catalog, hồ sơ, recommendation và crawl jobs.
-- `app/global.css`: design tokens và giao diện xanh responsive.
+- `app/scholarship.css`: design system xanh, responsive cho landing và khảo sát.
 - `DESIGN.md`: hợp đồng thiết kế của sản phẩm.
 
 ## Dữ liệu và bảo mật

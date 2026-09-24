@@ -3,7 +3,8 @@ import { createAuthPlugin } from "@agent-native/core/server";
 const appTitle = "Scholarship Compass";
 
 export default createAuthPlugin({
-  workspaceAppPublicPaths: ["/"],
+  workspaceAppPublicPaths: ["/", "/discover"],
+  publicPaths: ["/discover", "/_agent-native/actions/recommend-scholarships"],
   marketing: {
     appName: appTitle,
     screenshotPath: "/auth-marketing/chat.webp",
@@ -15,7 +16,7 @@ export default createAuthPlugin({
     features: [
       "Khảo sát từ bậc đại học đến tiến sĩ",
       "Top 10 gợi ý có giải thích và nguồn chính thức",
-      "Trao đổi tiếp với cố vấn ngay trong cùng một ứng dụng",
+      "Không cần tạo tài khoản hay đăng nhập để nhận kết quả",
     ],
   },
 });
