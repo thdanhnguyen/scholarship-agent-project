@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Khám phá học bổng quốc tế phù hợp với hồ sơ của bạn." />
+    <title>Scholarship Compass — Tìm học bổng quốc tế</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#top" aria-label="Scholarship Compass">
+          <span class="brand-mark">✦</span>
+          <span>Scholarship<br /><b>Compass</b></span>
+        </a>
+        <div class="topbar-note"><span class="pulse"></span> Khám phá cơ hội phù hợp với bạn</div>
+        <button class="avatar" type="button" aria-label="Hồ sơ của bạn">N</button>
+      </header>
+
+      <section class="hero" id="top">
+        <div class="hero-copy">
+          <p class="eyebrow">BẢN MVP · TRỢ LÝ HỌC BỔNG</p>
+          <h1>Đi xa hơn với <em>học bổng</em> phù hợp.</h1>
+          <p class="hero-description">Chọn hướng học của bạn, rồi để Compass gợi ý những cơ hội đáng cân nhắc — từ chính phủ đến các trường đại học.</p>
+          <div class="hero-pills" aria-label="Tính năng">
+            <span>🎓 Đại học</span><span>📚 Thạc sĩ</span><span>🔬 Tiến sĩ</span>
+          </div>
+        </div>
+        <aside class="profile-card" aria-label="Tóm tắt hồ sơ mẫu">
+          <div class="profile-top"><span class="mini-avatar">N</span><div><strong>Hồ sơ của bạn</strong><small>Hoàn thành 72%</small></div><span class="leaf">✦</span></div>
+          <div class="progress"><span></span></div>
+          <div class="profile-items"><span>✓ Bậc học</span><span>✓ Ngành quan tâm</span><span class="pending">○ Ngoại ngữ</span></div>
+          <button class="soft-button" type="button" id="completeProfile">Hoàn thiện hồ sơ <span>→</span></button>
+        </aside>
+      </section>
+
+      <section class="finder" aria-labelledby="finder-title">
+        <div class="section-heading"><div><p class="eyebrow">BẮT ĐẦU TỪ ĐÂY</p><h2 id="finder-title">Bạn muốn học ở đâu?</h2></div><p>Chọn một hoặc nhiều tiêu chí. Kết quả sẽ cập nhật ngay.</p></div>
+        <div class="filter-grid">
+          <fieldset class="filter-group"><legend>Châu lục</legend><div class="choice-row" id="continentChoices">
+            <button class="choice selected" data-continent="all" type="button">Tất cả</button><button class="choice" data-continent="Europe" type="button">Châu Âu</button><button class="choice" data-continent="North America" type="button">Bắc Mỹ</button><button class="choice" data-continent="Asia" type="button">Châu Á</button><button class="choice" data-continent="Oceania" type="button">Châu Đại Dương</button>
+          </div></fieldset>
+          <fieldset class="filter-group"><legend>Bậc học</legend><div class="choice-row" id="degreeChoices">
+            <button class="choice selected" data-degree="all" type="button">Tất cả</button><button class="choice" data-degree="Đại học" type="button">Đại học</button><button class="choice" data-degree="Thạc sĩ" type="button">Thạc sĩ</button><button class="choice" data-degree="Tiến sĩ" type="button">Tiến sĩ</button>
+          </div></fieldset>
+          <label class="budget-control" for="budget"><span>Ngân sách tự chi trả / năm</span><strong id="budgetValue">Dưới 10.000 USD</strong><input id="budget" type="range" min="0" max="3" value="1" step="1" /></label>
+        </div>
+      </section>
+
+      <section class="results" aria-labelledby="results-title">
+        <div class="results-heading"><div><p class="eyebrow">GỢI Ý HÔM NAY</p><h2 id="results-title">Các lựa chọn nổi bật</h2></div><div class="result-count" id="resultCount">4 cơ hội phù hợp</div></div>
+        <div class="scholarship-grid" id="scholarshipGrid"></div>
+        <div class="empty-state" id="emptyState" hidden><span>🌱</span><h3>Chưa có kết quả khớp hoàn toàn</h3><p>Thử đổi bậc học hoặc mở rộng châu lục bạn quan tâm nhé.</p><button class="soft-button" id="resetFilters" type="button">Xem tất cả cơ hội</button></div>
+      </section>
+
+      <section class="agent-section" aria-labelledby="agent-title">
+        <div><p class="eyebrow">AI COMPASS · SẮP CÓ</p><h2 id="agent-title">Chưa biết bắt đầu từ đâu?</h2><p>AI Agent sẽ đọc hồ sơ, so sánh chi phí sống và giải thích vì sao một học bổng có thể hợp với bạn.</p></div>
+        <button class="agent-button" id="askAgent" type="button">✨ Hỏi Compass một câu</button>
+      </section>
+    </main>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
