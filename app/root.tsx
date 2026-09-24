@@ -169,15 +169,16 @@ function AppContent() {
 export default function Root() {
   const [queryClient] = useState(() => createAgentNativeQueryClient());
   const location = useLocation();
-  const isMarketingPath = location.pathname === "/";
+  const isPublicExperience =
+    location.pathname === "/" || location.pathname === "/discover";
   return (
     <AppToolkitProvider>
       <AppProviders
         queryClient={queryClient}
-        isPublicPath={isMarketingPath}
+        isPublicPath={isPublicExperience}
         i18n={{ catalog: i18nCatalog }}
       >
-        {isMarketingPath ? (
+        {isPublicExperience ? (
           <Outlet />
         ) : (
           <>

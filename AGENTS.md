@@ -1,18 +1,20 @@
 # Scholarship Compass — Agent Guide
 
-Scholarship Compass is a guided scholarship-discovery app. The root redirects
-to the survey at `/discover`; the full-page advisory conversation lives at
-`/home`. Actions carry the real capabilities, and screens provide durable UI
-for profile collection and comparison.
+Scholarship Compass is a scholarship advisory website, not a chat product. The
+public root showcases featured opportunities and `/discover` contains the
+detailed candidate assessment. Agent actions run behind these workflows; never
+expose a ChatGPT-style rail, freeform prompt, robot/sparkle icon, or agent
+inspector in the primary user experience.
 
 ## Scholarship discovery
 
 The domain workflow lives at `/discover`. Use `recommend-scholarships` when a
-student provides a degree, field, destination, GPA, language level, funding
-preference, budget, nationality, and intake year. Preserve the returned order,
-match scores, reasons, and official source URLs. Results are an MVP shortlist,
-not an admission guarantee; remind the student to verify eligibility and
-deadlines on the official source.
+student provides academic, language, research, publication, work, leadership,
+extracurricular, destination, and financial details. Fields of study are free
+text and must never be limited to a fixed catalog. Preserve match order,
+estimated probability, funding range, gaps, ranking metadata, freshness, and
+official source URLs. Results are an evidence-backed estimate, never an
+admission guarantee.
 
 | Action                   | Purpose                                                                                                |
 | ------------------------ | ------------------------------------------------------------------------------------------------------ |

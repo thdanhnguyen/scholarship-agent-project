@@ -1,8 +1,9 @@
 # Scholarship Compass
 
-Ứng dụng Agent-Native giúp người học hoàn thành khảo sát hồ sơ và nhận danh
-sách Top 10 học bổng/trường phù hợp. MVP hỗ trợ bậc đại học, thạc sĩ và tiến
-sĩ; lọc theo châu lục, ngành học, GPA, ngoại ngữ, ngân sách và mức tài trợ.
+Website tư vấn học bổng có Agent chạy phía sau để chuẩn hóa nguồn, đánh giá hồ
+sơ và xếp hạng Top 10 cơ hội. Trang chủ giới thiệu học bổng nổi bật; khảo sát
+chuyên sâu bao gồm học thuật, ngoại ngữ, công việc, nghiên cứu, công bố, giải
+thưởng, ngoại khóa, lãnh đạo và tài chính. Ngành học là trường nhập tự do.
 
 ## Chạy dự án
 
@@ -31,6 +32,7 @@ pnpm agent-native:doctor
 - `app/routes/discover.tsx`: khảo sát bốn bước và màn hình Top 10.
 - `actions/recommend-scholarships.ts`: action xếp hạng dùng chung cho UI và agent.
 - `server/data/scholarships.ts`: dữ liệu mẫu có đường dẫn nguồn chính thức.
+- `supabase/migrations/`: schema Supabase cho catalog, hồ sơ, recommendation và crawl jobs.
 - `app/global.css`: design tokens và giao diện xanh responsive.
 - `DESIGN.md`: hợp đồng thiết kế của sản phẩm.
 

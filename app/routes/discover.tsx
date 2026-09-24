@@ -3,85 +3,133 @@ import { useMemo, useState } from "react";
 import { Link } from "react-router";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const degreeOptions = [
-  { value: "undergraduate", label: "Đại học" },
-  { value: "masters", label: "Thạc sĩ" },
-  { value: "phd", label: "Tiến sĩ" },
-] as const;
-
-const fundingOptions = [
-  { value: "full", label: "Cần học bổng toàn phần" },
-  { value: "partial", label: "Có thể nhận học bổng một phần" },
-  { value: "any", label: "Linh hoạt theo cơ hội" },
-] as const;
-
-const fieldLabels: Record<string, string> = {
-  business: "Kinh doanh & Quản trị",
-  "computer-science": "Khoa học máy tính",
-  engineering: "Kỹ thuật",
-  health: "Sức khỏe & Y sinh",
-  "social-sciences": "Khoa học xã hội",
-  arts: "Nghệ thuật & Nhân văn",
+type Profile = {
+  degree: "undergraduate" | "masters" | "phd";
+  field: string;
+  specialization: string;
+  nationality: string;
+  continent: "any" | "europe" | "north-america" | "asia" | "oceania";
+  preferredCountries: string;
+  intakeYear: number;
+  gpa: number;
+  gpaScale: "4" | "10" | "100";
+  classRankPercent: number;
+  languageTest: "none" | "ielts" | "toefl" | "duolingo" | "other";
+  languageScore: string;
+  workExperienceYears: number;
+  researchExperienceYears: number;
+  publications: number;
+  publicationLevel: "none" | "conference" | "journal" | "indexed" | "top-tier";
+  awards: number;
+  extracurricularLevel:
+    | "none"
+    | "participant"
+    | "leader"
+    | "national"
+    | "international";
+  leadershipYears: number;
+  volunteerHours: number;
+  recommendationLetters: number;
+  statementReadiness: number;
+  funding: "full" | "partial" | "any";
+  annualBudget: number;
+  primaryPriority:
+    | "cost"
+    | "career"
+    | "quality-of-life"
+    | "ranking"
+    | "research";
 };
 
-const continentLabels: Record<string, string> = {
-  any: "Mở cho mọi châu lục",
-  europe: "Châu Âu",
-  "north-america": "Bắc Mỹ",
-  asia: "Châu Á",
-  oceania: "Châu Đại Dương",
+const steps = [
+  "Mục tiêu",
+  "Điểm đến",
+  "Học thuật",
+  "Ngoại ngữ",
+  "Kinh nghiệm & nghiên cứu",
+  "Ngoại khóa",
+  "Tài chính",
+] as const;
+
+const initialProfile: Profile = {
+  degree: "masters",
+  field: "Khoa học dữ liệu",
+  specialization: "",
+  nationality: "Việt Nam",
+  continent: "any",
+  preferredCountries: "",
+  intakeYear: 2027,
+  gpa: 8,
+  gpaScale: "10",
+  classRankPercent: 0,
+  languageTest: "ielts",
+  languageScore: "6.5",
+  workExperienceYears: 0,
+  researchExperienceYears: 0,
+  publications: 0,
+  publicationLevel: "none",
+  awards: 0,
+  extracurricularLevel: "participant",
+  leadershipYears: 0,
+  volunteerHours: 0,
+  recommendationLetters: 2,
+  statementReadiness: 3,
+  funding: "full",
+  annualBudget: 10000,
+  primaryPriority: "cost",
 };
 
-const degreeLabels: Record<string, string> = {
+const degreeLabels: Record<Profile["degree"], string> = {
   undergraduate: "Đại học",
   masters: "Thạc sĩ",
   phd: "Tiến sĩ",
 };
 
-const steps = ["Hướng học", "Điểm đến", "Năng lực", "Tài chính"] as const;
-
-type Profile = {
-  degree: "undergraduate" | "masters" | "phd";
-  field:
-    | "business"
-    | "computer-science"
-    | "engineering"
-    | "health"
-    | "social-sciences"
-    | "arts";
-  continent: "any" | "europe" | "north-america" | "asia" | "oceania";
-  nationality: string;
-  intakeYear: number;
-  gpa: number;
-  language: "none" | "ielts-5-5" | "ielts-6-0" | "ielts-6-5" | "ielts-7-plus";
-  funding: "full" | "partial" | "any";
-  annualBudget: number;
-};
-
-const initialProfile: Profile = {
-  degree: "masters",
-  field: "computer-science",
-  continent: "any",
-  nationality: "Việt Nam",
-  intakeYear: 2027,
-  gpa: 8,
-  language: "ielts-6-5",
-  funding: "full",
-  annualBudget: 10000,
-};
-
 export function meta() {
   return [
-    { title: "Khảo sát hồ sơ — Scholarship Compass" },
+    { title: "Đánh giá hồ sơ — Scholarship Compass" },
     {
       name: "description",
-      content: "Hoàn thành khảo sát để nhận Top 10 học bổng và trường phù hợp.",
+      content:
+        "Phân tích chi tiết khả năng nhận học bổng và Top 10 trường phù hợp.",
     },
   ];
+}
+
+function NumberField({
+  label,
+  value,
+  onChange,
+  min = 0,
+  max,
+  step = 1,
+  hint,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  hint?: string;
+}) {
+  return (
+    <div className="survey-field">
+      <Label>{label}</Label>
+      <Input
+        type="number"
+        value={value}
+        min={min}
+        max={max}
+        step={step}
+        onChange={(event) => onChange(Number(event.target.value))}
+      />
+      {hint ? <small>{hint}</small> : null}
+    </div>
+  );
 }
 
 export default function DiscoverRoute() {
@@ -91,24 +139,20 @@ export default function DiscoverRoute() {
   const results = recommendation.data?.recommendations ?? [];
 
   const canContinue = useMemo(() => {
-    if (step === 0) return Boolean(profile.degree && profile.field);
+    if (step === 0) return profile.field.trim().length >= 2;
     if (step === 1) return profile.nationality.trim().length >= 2;
-    if (step === 2) return profile.gpa >= 0 && profile.gpa <= 10;
-    return profile.annualBudget >= 0;
+    if (step === 2)
+      return profile.gpa >= 0 && profile.gpa <= Number(profile.gpaScale);
+    if (step === 3)
+      return (
+        profile.languageTest === "none" ||
+        profile.languageScore.trim().length > 0
+      );
+    return true;
   }, [profile, step]);
 
   function update<K extends keyof Profile>(key: K, value: Profile[K]) {
     setProfile((current) => ({ ...current, [key]: value }));
-  }
-
-  function nextStep() {
-    if (!canContinue) return;
-    setStep((current) => Math.min(steps.length - 1, current + 1));
-  }
-
-  function submitSurvey() {
-    if (!canContinue) return;
-    recommendation.mutate(profile);
   }
 
   function restartSurvey() {
@@ -119,352 +163,512 @@ export default function DiscoverRoute() {
 
   if (results.length > 0) {
     return (
-      <div className="scholar-page">
-        <header className="scholar-topbar">
-          <Link
-            to="/discover"
-            className="scholar-brand"
-            onClick={restartSurvey}
-          >
+      <div className="assessment-site">
+        <header className="public-nav assessment-nav">
+          <Link to="/" className="scholar-brand">
             <span className="scholar-brand-mark">S</span>
             <span>Scholarship Compass</span>
           </Link>
-          <Link to="/home" className="scholar-text-link">
-            Tư vấn thêm
-          </Link>
+          <Button variant="outline" onClick={restartSurvey}>
+            Đánh giá lại
+          </Button>
         </header>
-
-        <div className="scholar-results-layout">
-          <aside className="scholar-profile-summary">
-            <p className="scholar-kicker">Hồ sơ đã phân tích</p>
-            <h1>Top 10 dành cho bạn</h1>
-            <dl>
-              <div>
-                <dt>Bậc học</dt>
-                <dd>{degreeLabels[profile.degree]}</dd>
-              </div>
-              <div>
-                <dt>Ngành</dt>
-                <dd>{fieldLabels[profile.field]}</dd>
-              </div>
-              <div>
-                <dt>Khu vực</dt>
-                <dd>{continentLabels[profile.continent]}</dd>
-              </div>
-              <div>
-                <dt>GPA</dt>
-                <dd>{profile.gpa.toFixed(1)} / 10</dd>
-              </div>
-            </dl>
-            <Button
-              variant="outline"
-              className="w-full"
-              onClick={restartSurvey}
-            >
-              Làm lại khảo sát
-            </Button>
-            <p className="scholar-disclaimer">
-              {recommendation.data?.disclaimer}
-            </p>
-          </aside>
-
+        <main className="assessment-results">
+          <section className="assessment-result-intro">
+            <p className="scholar-kicker">Báo cáo hồ sơ cá nhân</p>
+            <h1>Top 10 cơ hội dành cho {profile.field}</h1>
+            <p>{recommendation.data?.methodology}</p>
+            <div className="profile-facts">
+              <span>{degreeLabels[profile.degree]}</span>
+              <span>
+                GPA {profile.gpa}/{profile.gpaScale}
+              </span>
+              <span>{profile.nationality}</span>
+              <span>Kỳ {profile.intakeYear}</span>
+            </div>
+          </section>
           <section
-            className="scholar-result-list"
-            aria-label="Top 10 học bổng phù hợp"
+            className="recommendation-grid"
+            aria-label="Top 10 học bổng và trường phù hợp"
           >
             {results.map((item) => (
-              <article className="scholar-result-row" key={item.id}>
-                <div className="scholar-rank" aria-label={`Hạng ${item.rank}`}>
-                  {String(item.rank).padStart(2, "0")}
-                </div>
-                <div className="scholar-result-main">
-                  <div className="scholar-result-heading">
+              <article className="recommendation-card" key={item.id}>
+                <div className="recommendation-rank">#{item.rank}</div>
+                <div className="recommendation-card-main">
+                  <div className="recommendation-heading">
                     <div>
-                      <h2>{item.name}</h2>
                       <p>
                         {item.provider} · {item.country}
                       </p>
+                      <h2>{item.name}</h2>
                     </div>
-                    <strong>{item.matchScore}%</strong>
+                    <div className="probability-score">
+                      <strong>{item.matchScore}%</strong>
+                      <span>độ phù hợp ước tính</span>
+                    </div>
                   </div>
-                  <div className="scholar-result-details">
-                    <span>
-                      {item.fundingType === "full" ? "Toàn phần" : "Một phần"}
-                    </span>
-                    <span>{item.coverage}</span>
+                  <div className="recommendation-metrics">
+                    <div>
+                      <span>Mức tài trợ</span>
+                      <strong>{item.fundingEstimate}</strong>
+                    </div>
+                    <div>
+                      <span>Ranking</span>
+                      <strong>{item.universityRanking}</strong>
+                    </div>
+                    <div>
+                      <span>Chi phí sống</span>
+                      <strong>{item.livingCost}</strong>
+                    </div>
                   </div>
-                  <ul>
-                    {item.reasons.map((reason) => (
-                      <li key={reason}>{reason}</li>
-                    ))}
-                  </ul>
-                  <a href={item.officialUrl} target="_blank" rel="noreferrer">
-                    Xem nguồn chính thức
-                  </a>
+                  <p className="coverage-line">
+                    <strong>Quyền lợi:</strong> {item.coverage}
+                  </p>
+                  <div className="evidence-columns">
+                    <div>
+                      <h3>Lợi thế hồ sơ</h3>
+                      <ul>
+                        {item.reasons.map((reason) => (
+                          <li key={reason}>{reason}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h3>Cần cải thiện</h3>
+                      <ul>
+                        {item.gaps.length ? (
+                          item.gaps.map((gap) => <li key={gap}>{gap}</li>)
+                        ) : (
+                          <li>
+                            Chưa phát hiện khoảng trống lớn trong dữ liệu đã
+                            nhập
+                          </li>
+                        )}
+                      </ul>
+                    </div>
+                  </div>
+                  <p className="destination-note">{item.destinationReview}</p>
+                  <div className="recommendation-footer">
+                    <span>{item.dataStatus}</span>
+                    <a href={item.officialUrl} target="_blank" rel="noreferrer">
+                      Nguồn chính thức
+                    </a>
+                  </div>
                 </div>
               </article>
             ))}
           </section>
-        </div>
+          <p className="result-disclaimer">{recommendation.data?.disclaimer}</p>
+        </main>
       </div>
     );
   }
 
   return (
-    <div className="scholar-page scholar-survey-page">
-      <header className="scholar-topbar">
-        <Link to="/discover" className="scholar-brand">
+    <div className="assessment-site">
+      <header className="public-nav assessment-nav">
+        <Link to="/" className="scholar-brand">
           <span className="scholar-brand-mark">S</span>
           <span>Scholarship Compass</span>
         </Link>
-        <span className="scholar-step-count">
-          Bước {step + 1} / {steps.length}
+        <span className="assessment-step-label">
+          Bước {step + 1}/{steps.length}
         </span>
       </header>
+      <main className="assessment-shell">
+        <aside className="assessment-progress">
+          <p className="scholar-kicker">Đánh giá hồ sơ</p>
+          <h1>Càng chi tiết, kết quả càng hữu ích.</h1>
+          <p>
+            Không có câu trả lời hoàn hảo. Những mục chưa có sẽ trở thành gợi ý
+            cải thiện.
+          </p>
+          <ol>
+            {steps.map((label, index) => (
+              <li
+                key={label}
+                className={
+                  index === step ? "active" : index < step ? "done" : ""
+                }
+              >
+                <span>{index + 1}</span>
+                {label}
+              </li>
+            ))}
+          </ol>
+        </aside>
 
-      <main className="scholar-survey-shell">
-        <div
-          className="scholar-progress"
-          aria-label={`Tiến độ ${step + 1} trên ${steps.length}`}
-        >
-          {steps.map((label, index) => (
-            <div key={label} className={index <= step ? "is-active" : ""}>
-              <span></span>
-              <small>{label}</small>
-            </div>
-          ))}
-        </div>
-
-        <Card className="scholar-survey-card">
-          <CardHeader>
-            <CardTitle>{stepTitle(step)}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            {step === 0 ? (
-              <div className="scholar-form-stack">
-                <fieldset>
-                  <legend>Bậc học bạn muốn theo đuổi</legend>
-                  <div className="scholar-choice-grid scholar-choice-grid-3">
-                    {degreeOptions.map((option) => (
-                      <Button
-                        key={option.value}
-                        type="button"
-                        variant={
-                          profile.degree === option.value
-                            ? "default"
-                            : "outline"
-                        }
-                        onClick={() => update("degree", option.value)}
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
-                  </div>
-                </fieldset>
-                <div className="scholar-field">
-                  <Label htmlFor="field">Ngành học chính</Label>
-                  <select
-                    id="field"
-                    className="scholar-select"
-                    value={profile.field}
-                    onChange={(event) =>
-                      update("field", event.target.value as Profile["field"])
-                    }
+        <section className="assessment-form-card">
+          {step === 0 ? (
+            <>
+              <p className="scholar-kicker">Mục tiêu học tập</p>
+              <h2>Bạn muốn đi đến đâu trong hành trình học thuật?</h2>
+              <div className="option-row" role="group" aria-label="Bậc học">
+                {Object.entries(degreeLabels).map(([value, label]) => (
+                  <button
+                    type="button"
+                    key={value}
+                    className={profile.degree === value ? "selected" : ""}
+                    onClick={() => update("degree", value as Profile["degree"])}
                   >
-                    {Object.entries(fieldLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                    {label}
+                  </button>
+                ))}
               </div>
-            ) : null}
+              <div className="survey-field">
+                <Label htmlFor="field">Ngành học mong muốn</Label>
+                <Input
+                  id="field"
+                  value={profile.field}
+                  onChange={(e) => update("field", e.target.value)}
+                  placeholder="Ví dụ: Luật thương mại quốc tế, Kiến trúc, AI..."
+                />
+                <small>
+                  Nhập tự do, không giới hạn trong danh sách ngành cố định.
+                </small>
+              </div>
+              <div className="survey-field">
+                <Label htmlFor="specialization">
+                  Chuyên ngành/hướng nghiên cứu cụ thể
+                </Label>
+                <Input
+                  id="specialization"
+                  value={profile.specialization}
+                  onChange={(e) => update("specialization", e.target.value)}
+                  placeholder="Ví dụ: Computer Vision trong chẩn đoán hình ảnh"
+                />
+              </div>
+            </>
+          ) : null}
 
-            {step === 1 ? (
-              <div className="scholar-form-stack">
-                <div className="scholar-field">
-                  <Label htmlFor="continent">Châu lục ưu tiên</Label>
+          {step === 1 ? (
+            <>
+              <p className="scholar-kicker">Điểm đến</p>
+              <h2>Quốc gia nào phù hợp với kế hoạch của bạn?</h2>
+              <div className="survey-grid">
+                <div className="survey-field">
+                  <Label>Châu lục ưu tiên</Label>
                   <select
-                    id="continent"
-                    className="scholar-select"
                     value={profile.continent}
-                    onChange={(event) =>
+                    onChange={(e) =>
                       update(
                         "continent",
-                        event.target.value as Profile["continent"],
+                        e.target.value as Profile["continent"],
                       )
                     }
                   >
-                    {Object.entries(continentLabels).map(([value, label]) => (
-                      <option key={value} value={value}>
-                        {label}
-                      </option>
-                    ))}
+                    <option value="any">Mở cho mọi châu lục</option>
+                    <option value="europe">Châu Âu</option>
+                    <option value="north-america">Bắc Mỹ</option>
+                    <option value="asia">Châu Á</option>
+                    <option value="oceania">Châu Đại Dương</option>
                   </select>
                 </div>
-                <div className="scholar-two-columns">
-                  <div className="scholar-field">
-                    <Label htmlFor="nationality">Quốc tịch</Label>
-                    <Input
-                      id="nationality"
-                      value={profile.nationality}
-                      onChange={(event) =>
-                        update("nationality", event.target.value)
-                      }
-                      aria-invalid={profile.nationality.trim().length < 2}
-                    />
-                  </div>
-                  <div className="scholar-field">
-                    <Label htmlFor="intake">Năm nhập học dự kiến</Label>
-                    <select
-                      id="intake"
-                      className="scholar-select"
-                      value={profile.intakeYear}
-                      onChange={(event) =>
-                        update("intakeYear", Number(event.target.value))
-                      }
-                    >
-                      {[2026, 2027, 2028, 2029, 2030].map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              </div>
-            ) : null}
-
-            {step === 2 ? (
-              <div className="scholar-form-stack">
-                <div className="scholar-field">
-                  <Label htmlFor="gpa">GPA hiện tại (thang 10)</Label>
+                <div className="survey-field">
+                  <Label>Quốc tịch</Label>
                   <Input
-                    id="gpa"
-                    type="number"
-                    min="0"
-                    max="10"
-                    step="0.1"
-                    value={profile.gpa}
-                    onChange={(event) =>
-                      update("gpa", Number(event.target.value))
-                    }
-                    aria-invalid={profile.gpa < 0 || profile.gpa > 10}
+                    value={profile.nationality}
+                    onChange={(e) => update("nationality", e.target.value)}
                   />
                 </div>
-                <div className="scholar-field">
-                  <Label htmlFor="language">Trình độ tiếng Anh gần nhất</Label>
+              </div>
+              <div className="survey-field">
+                <Label>Quốc gia cụ thể đang quan tâm</Label>
+                <Input
+                  value={profile.preferredCountries}
+                  onChange={(e) => update("preferredCountries", e.target.value)}
+                  placeholder="Đức, Hà Lan, Anh..."
+                />
+              </div>
+              <NumberField
+                label="Năm nhập học dự kiến"
+                value={profile.intakeYear}
+                min={2026}
+                max={2032}
+                onChange={(value) => update("intakeYear", value)}
+              />
+            </>
+          ) : null}
+
+          {step === 2 ? (
+            <>
+              <p className="scholar-kicker">Nền tảng học thuật</p>
+              <h2>Cho chúng tôi biết vị trí học thuật hiện tại.</h2>
+              <div className="survey-grid">
+                <NumberField
+                  label="GPA hiện tại"
+                  value={profile.gpa}
+                  max={Number(profile.gpaScale)}
+                  step={0.01}
+                  onChange={(value) => update("gpa", value)}
+                />
+                <div className="survey-field">
+                  <Label>Thang GPA</Label>
                   <select
-                    id="language"
-                    className="scholar-select"
-                    value={profile.language}
-                    onChange={(event) =>
+                    value={profile.gpaScale}
+                    onChange={(e) =>
+                      update("gpaScale", e.target.value as Profile["gpaScale"])
+                    }
+                  >
+                    <option value="4">Thang 4</option>
+                    <option value="10">Thang 10</option>
+                    <option value="100">Thang 100</option>
+                  </select>
+                </div>
+              </div>
+              <NumberField
+                label="Bạn thuộc top bao nhiêu % của lớp?"
+                value={profile.classRankPercent}
+                max={100}
+                onChange={(value) => update("classRankPercent", value)}
+                hint="Nhập 0 nếu trường không cung cấp xếp hạng."
+              />
+            </>
+          ) : null}
+
+          {step === 3 ? (
+            <>
+              <p className="scholar-kicker">Ngoại ngữ</p>
+              <h2>Chứng chỉ gần nhất của bạn là gì?</h2>
+              <div className="survey-grid">
+                <div className="survey-field">
+                  <Label>Loại chứng chỉ</Label>
+                  <select
+                    value={profile.languageTest}
+                    onChange={(e) =>
                       update(
-                        "language",
-                        event.target.value as Profile["language"],
+                        "languageTest",
+                        e.target.value as Profile["languageTest"],
                       )
                     }
                   >
                     <option value="none">Chưa có chứng chỉ</option>
-                    <option value="ielts-5-5">Tương đương IELTS 5.5</option>
-                    <option value="ielts-6-0">Tương đương IELTS 6.0</option>
-                    <option value="ielts-6-5">Tương đương IELTS 6.5</option>
-                    <option value="ielts-7-plus">Tương đương IELTS 7.0+</option>
+                    <option value="ielts">IELTS</option>
+                    <option value="toefl">TOEFL iBT</option>
+                    <option value="duolingo">Duolingo English Test</option>
+                    <option value="other">Khác</option>
                   </select>
                 </div>
-              </div>
-            ) : null}
-
-            {step === 3 ? (
-              <div className="scholar-form-stack">
-                <fieldset>
-                  <legend>Mức hỗ trợ mong muốn</legend>
-                  <div className="scholar-choice-grid">
-                    {fundingOptions.map((option) => (
-                      <Button
-                        key={option.value}
-                        type="button"
-                        variant={
-                          profile.funding === option.value
-                            ? "default"
-                            : "outline"
-                        }
-                        onClick={() => update("funding", option.value)}
-                      >
-                        {option.label}
-                      </Button>
-                    ))}
-                  </div>
-                </fieldset>
-                <div className="scholar-field">
-                  <Label htmlFor="budget">
-                    Ngân sách tự chi trả tối đa mỗi năm (USD)
-                  </Label>
+                <div className="survey-field">
+                  <Label>Điểm số</Label>
                   <Input
-                    id="budget"
-                    type="number"
-                    min="0"
-                    max="100000"
-                    step="500"
-                    value={profile.annualBudget}
-                    onChange={(event) =>
-                      update("annualBudget", Number(event.target.value))
-                    }
-                    aria-invalid={profile.annualBudget < 0}
+                    value={profile.languageScore}
+                    disabled={profile.languageTest === "none"}
+                    onChange={(e) => update("languageScore", e.target.value)}
+                    placeholder="Ví dụ: 7.0"
                   />
                 </div>
               </div>
-            ) : null}
+            </>
+          ) : null}
 
-            {recommendation.error ? (
-              <p className="scholar-error" role="alert">
-                Chưa thể tạo danh sách. Vui lòng kiểm tra thông tin và thử lại.
-              </p>
-            ) : null}
+          {step === 4 ? (
+            <>
+              <p className="scholar-kicker">Kinh nghiệm & nghiên cứu</p>
+              <h2>Những bằng chứng chuyên môn nào đang có trong hồ sơ?</h2>
+              <div className="survey-grid">
+                <NumberField
+                  label="Số năm kinh nghiệm làm việc"
+                  value={profile.workExperienceYears}
+                  max={40}
+                  step={0.5}
+                  onChange={(value) => update("workExperienceYears", value)}
+                />
+                <NumberField
+                  label="Số năm kinh nghiệm nghiên cứu"
+                  value={profile.researchExperienceYears}
+                  max={20}
+                  step={0.5}
+                  onChange={(value) => update("researchExperienceYears", value)}
+                />
+              </div>
+              <div className="survey-grid">
+                <NumberField
+                  label="Số bài báo/công bố"
+                  value={profile.publications}
+                  max={100}
+                  onChange={(value) => update("publications", value)}
+                />
+                <div className="survey-field">
+                  <Label>Cấp độ công bố cao nhất</Label>
+                  <select
+                    value={profile.publicationLevel}
+                    onChange={(e) =>
+                      update(
+                        "publicationLevel",
+                        e.target.value as Profile["publicationLevel"],
+                      )
+                    }
+                  >
+                    <option value="none">Chưa có</option>
+                    <option value="conference">Hội nghị</option>
+                    <option value="journal">Tạp chí</option>
+                    <option value="indexed">Scopus/ISI</option>
+                    <option value="top-tier">Top-tier/Q1-Q2</option>
+                  </select>
+                </div>
+              </div>
+              <NumberField
+                label="Số giải thưởng học thuật/chuyên môn"
+                value={profile.awards}
+                max={100}
+                onChange={(value) => update("awards", value)}
+              />
+            </>
+          ) : null}
 
-            <div className="scholar-form-actions">
-              {step > 0 ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={() => setStep((current) => current - 1)}
+          {step === 5 ? (
+            <>
+              <p className="scholar-kicker">Ngoại khóa & lãnh đạo</p>
+              <h2>Hồ sơ của bạn tạo ảnh hưởng ngoài lớp học như thế nào?</h2>
+              <div className="survey-field">
+                <Label>Mức độ hoạt động ngoại khóa nổi bật nhất</Label>
+                <select
+                  value={profile.extracurricularLevel}
+                  onChange={(e) =>
+                    update(
+                      "extracurricularLevel",
+                      e.target.value as Profile["extracurricularLevel"],
+                    )
+                  }
                 >
-                  Quay lại
-                </Button>
-              ) : (
-                <span />
-              )}
-              {step < steps.length - 1 ? (
-                <Button
+                  <option value="none">Chưa có hoạt động đáng kể</option>
+                  <option value="participant">
+                    Thành viên/tham gia thường xuyên
+                  </option>
+                  <option value="leader">Trưởng nhóm/ban tổ chức</option>
+                  <option value="national">Thành tích cấp quốc gia</option>
+                  <option value="international">Thành tích cấp quốc tế</option>
+                </select>
+              </div>
+              <div className="survey-grid">
+                <NumberField
+                  label="Số năm giữ vai trò lãnh đạo"
+                  value={profile.leadershipYears}
+                  max={20}
+                  step={0.5}
+                  onChange={(value) => update("leadershipYears", value)}
+                />
+                <NumberField
+                  label="Tổng giờ tình nguyện/cộng đồng"
+                  value={profile.volunteerHours}
+                  max={10000}
+                  onChange={(value) => update("volunteerHours", value)}
+                />
+              </div>
+              <div className="survey-grid">
+                <NumberField
+                  label="Số thư giới thiệu có thể chuẩn bị"
+                  value={profile.recommendationLetters}
+                  max={5}
+                  onChange={(value) => update("recommendationLetters", value)}
+                />
+                <NumberField
+                  label="Mức sẵn sàng của bài luận (1–5)"
+                  value={profile.statementReadiness}
+                  min={1}
+                  max={5}
+                  onChange={(value) => update("statementReadiness", value)}
+                />
+              </div>
+            </>
+          ) : null}
+
+          {step === 6 ? (
+            <>
+              <p className="scholar-kicker">Tài chính & ưu tiên</p>
+              <h2>
+                Một cơ hội phù hợp phải giải quyết điều gì quan trọng nhất?
+              </h2>
+              <div className="option-row" role="group" aria-label="Mức tài trợ">
+                <button
                   type="button"
-                  disabled={!canContinue}
-                  onClick={nextStep}
+                  className={profile.funding === "full" ? "selected" : ""}
+                  onClick={() => update("funding", "full")}
                 >
-                  Tiếp tục
-                </Button>
-              ) : (
-                <Button
+                  Toàn phần
+                </button>
+                <button
                   type="button"
-                  disabled={!canContinue || recommendation.isPending}
-                  onClick={submitSurvey}
+                  className={profile.funding === "partial" ? "selected" : ""}
+                  onClick={() => update("funding", "partial")}
                 >
-                  {recommendation.isPending
-                    ? "Đang xếp hạng…"
-                    : "Xem Top 10 phù hợp"}
-                </Button>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+                  Một phần
+                </button>
+                <button
+                  type="button"
+                  className={profile.funding === "any" ? "selected" : ""}
+                  onClick={() => update("funding", "any")}
+                >
+                  Linh hoạt
+                </button>
+              </div>
+              <NumberField
+                label="Ngân sách tự chi trả tối đa mỗi năm (USD)"
+                value={profile.annualBudget}
+                max={200000}
+                step={500}
+                onChange={(value) => update("annualBudget", value)}
+              />
+              <div className="survey-field">
+                <Label>Ưu tiên quan trọng nhất</Label>
+                <select
+                  value={profile.primaryPriority}
+                  onChange={(e) =>
+                    update(
+                      "primaryPriority",
+                      e.target.value as Profile["primaryPriority"],
+                    )
+                  }
+                >
+                  <option value="cost">Chi phí sống thấp</option>
+                  <option value="career">Cơ hội việc làm</option>
+                  <option value="quality-of-life">Chất lượng sống</option>
+                  <option value="ranking">Ranking của trường</option>
+                  <option value="research">Môi trường nghiên cứu</option>
+                </select>
+              </div>
+            </>
+          ) : null}
+
+          {recommendation.error ? (
+            <p className="survey-error">
+              Không thể phân tích hồ sơ. Vui lòng kiểm tra dữ liệu và thử lại.
+            </p>
+          ) : null}
+          <div className="assessment-actions">
+            {step > 0 ? (
+              <Button
+                variant="outline"
+                onClick={() => setStep((current) => current - 1)}
+              >
+                Quay lại
+              </Button>
+            ) : (
+              <Link to="/" className="public-secondary-link">
+                Về trang chủ
+              </Link>
+            )}
+            {step < steps.length - 1 ? (
+              <Button
+                disabled={!canContinue}
+                onClick={() => setStep((current) => current + 1)}
+              >
+                Tiếp tục
+              </Button>
+            ) : (
+              <Button
+                disabled={recommendation.isPending}
+                onClick={() => recommendation.mutate(profile)}
+              >
+                {recommendation.isPending
+                  ? "Đang phân tích hồ sơ..."
+                  : "Nhận báo cáo Top 10"}
+              </Button>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );
-}
-
-function stepTitle(step: number) {
-  if (step === 0) return "Bạn đang hướng đến chương trình nào?";
-  if (step === 1) return "Bạn muốn học ở đâu và khi nào?";
-  if (step === 2) return "Hồ sơ học tập hiện tại của bạn";
-  return "Mức hỗ trợ nào phù hợp với bạn?";
 }
